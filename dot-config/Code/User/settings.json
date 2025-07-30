@@ -1,0 +1,50 @@
+{
+  "redhat.telemetry.enabled": false,
+
+  "diffEditor.ignoreTrimWhitespace": false,
+
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "none",
+  "editor.semanticHighlighting.enabled": true,
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.openRepositoryInParentFolders": "always",
+
+  "remote.autoForwardPortsSource": "hybrid",
+
+  "terminal.integrated.minimumContrastRatio": 1,
+
+  "terraform.languageServer.enable": false,
+
+  "window.titleBarStyle": "custom",
+  "workbench.colorTheme": "Catppuccin Macchiato",
+
+  "[javascript][typescript][typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc][json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.formatOnType": true,
+    "editor.tabSize": 2,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "ansible.python.interpreterPath": "/opt/homebrew/bin/python3"
+}
