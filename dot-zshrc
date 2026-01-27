@@ -15,3 +15,6 @@ if [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
     export PATH="$PATH:$npm_prefix"
   fi
 fi
+
+## antigravity
+export PATH="/Users/jonny/.antigravity/antigravity/bin:$PATH"
