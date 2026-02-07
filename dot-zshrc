@@ -20,3 +20,7 @@ fi
 if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
   export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 fi
+
+if [ -d "$HOME/jonnyoc-bin" ]; then
+  export PATH="$HOME/jonnyoc-bin:$PATH"
+fi
