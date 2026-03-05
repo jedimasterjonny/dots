@@ -119,3 +119,8 @@ fi
 if [ -f $HOME/.local/bin ]; then
   PATH="$HOME/.local/bin:$PATH"
 fi
+
+if [[ "$(uname)" == "Linux" && -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+fi
+
