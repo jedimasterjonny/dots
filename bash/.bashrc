@@ -116,7 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if [ -f $HOME/.local/bin ]; then
+if [ -d "$HOME/.local/bin" ]; then
   PATH="$HOME/.local/bin:$PATH"
 fi
 
