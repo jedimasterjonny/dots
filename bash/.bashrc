@@ -124,3 +124,7 @@ if [[ "$(uname)" == "Linux" && -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 fi
 
+if [ -d "$HOME/google-cloud-sdk" ]; then
+  [ -s "$HOME/google-cloud-sdk/path.bash.inc" ] && . "$HOME/google-cloud-sdk/path.bash.inc"
+  [ -s "$HOME/google-cloud-sdk/completion.bash.inc" ] && . "$HOME/google-cloud-sdk/completion.bash.inc"
+fi
