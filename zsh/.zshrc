@@ -4,6 +4,11 @@ if [ -d "$HOME/google-cloud-sdk" ]; then
   [ -s "$HOME/google-cloud-sdk/completion.zsh.inc" ] && . "$HOME/google-cloud-sdk/completion.zsh.inc"
 fi
 
+## brew
+if [[ "$(uname)" == "Linux" && -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+fi
+
 ## nvm
 if [ -n "$HOMEBREW_PREFIX" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
   export NVM_DIR="$HOME/.nvm"
