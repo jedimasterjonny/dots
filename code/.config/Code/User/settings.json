@@ -59,6 +59,5 @@
     },
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
-  "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "ansible.python.interpreterPath": "/opt/homebrew/bin/python3"
+  "terminal.integrated.enableMultiLinePasteWarning": "never"
 }
