@@ -1,5 +1,9 @@
 [user]
 	name = jedimasterjonny
 	email = 46541898+jedimasterjonny@users.noreply.github.com
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
 [rerere]
 	enabled = true
