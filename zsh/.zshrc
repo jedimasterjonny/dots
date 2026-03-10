@@ -8,6 +8,7 @@ fi
 if [[ "$(uname)" == "Linux" && -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 fi
+export HOMEBREW_NO_ENV_HINTS=1
 
 ## nvm
 if [ -n "$HOMEBREW_PREFIX" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then

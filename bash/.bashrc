@@ -123,6 +123,7 @@ fi
 if [[ "$(uname)" == "Linux" && -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 fi
+export HOMEBREW_NO_ENV_HINTS=1
 
 if [ -d "$HOME/google-cloud-sdk" ]; then
   [ -s "$HOME/google-cloud-sdk/path.bash.inc" ] && . "$HOME/google-cloud-sdk/path.bash.inc"
