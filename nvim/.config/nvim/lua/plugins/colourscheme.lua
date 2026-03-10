@@ -8,5 +8,11 @@ return {
       require("catppuccin").setup(opts)
       vim.cmd.colorscheme("catppuccin")
     end,
+
+    integrations = {
+      mason = true,
+      snacks = true,
+      treesitter_context = true,
+    },
   },
 }
