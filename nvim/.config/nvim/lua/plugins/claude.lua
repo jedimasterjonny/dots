@@ -1,6 +1,7 @@
 return {
   "coder/claudecode.nvim",
-  opts = {},
+  dependencies = { "folke/snacks.nvim" },
+  config = true,
   keys = {
     { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
     { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
