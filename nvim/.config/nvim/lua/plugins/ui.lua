@@ -10,7 +10,7 @@ return {
     event = "VeryLazy",
     opts = {
       options = {
-        theme = "catppuccin-macchiato",
+        theme = "auto",
       },
     },
   },
