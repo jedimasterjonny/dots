@@ -9,7 +9,6 @@ return {
         bufferline = true,
         mason = true,
         snacks = true,
-        treesitter_context = true,
       },
     },
     config = function(_, opts)
