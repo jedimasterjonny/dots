@@ -13,6 +13,8 @@ return {
       ensure_installed = {
         "stylua",
         "lua-language-server",
+        "omnisharp",
+        "csharpier",
       },
     },
   },
@@ -38,6 +40,9 @@ return {
         },
       })
       vim.lsp.enable("lua_ls")
+
+      vim.lsp.config("omnisharp", {})
+      vim.lsp.enable("omnisharp")
     end,
   },
   {

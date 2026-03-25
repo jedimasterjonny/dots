@@ -6,6 +6,7 @@ return {
     opts = {
       formatters_by_ft = {
         lua = { "stylua" },
+        cs = { "csharpier" },
       },
       format_on_save = {
         lsp_format = "fallback",
