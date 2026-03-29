@@ -15,6 +15,8 @@ return {
         "lua-language-server",
         "omnisharp",
         "csharpier",
+        "basedpyright",
+        "ruff",
       },
     },
   },
@@ -43,6 +45,17 @@ return {
 
       vim.lsp.config("omnisharp", {})
       vim.lsp.enable("omnisharp")
+
+      vim.lsp.config("basedpyright", {
+        settings = {
+          basedpyright = {
+            analysis = {
+              typeCheckingMode = "standard",
+            },
+          },
+        },
+      })
+      vim.lsp.enable("basedpyright")
     end,
   },
   {
