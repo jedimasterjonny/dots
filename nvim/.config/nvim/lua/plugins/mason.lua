@@ -29,6 +29,14 @@ return {
     },
     keys = {
       { "<leader>cd", function() vim.diagnostic.open_float() end, desc = "Show diagnostic" },
+      { "<leader>cy", function()
+        local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
+        if #diags == 0 then return end
+        local msg = table.concat(vim.tbl_map(function(d) return d.message end, diags), "\n")
+        vim.fn.setreg("+", msg)
+        vim.notify("Copied diagnostic to clipboard")
+      end, desc = "Copy diagnostic" },
+      { "<leader>cq", function() vim.diagnostic.setloclist() end, desc = "Diagnostic list" },
       { "]d", function() vim.diagnostic.jump({ count = 1 }) end, desc = "Next diagnostic" },
       { "[d", function() vim.diagnostic.jump({ count = -1 }) end, desc = "Prev diagnostic" },
     },
