@@ -17,6 +17,9 @@ return {
         "csharpier",
         "basedpyright",
         "ruff",
+        "typescript-language-server",
+        "prettierd",
+        "eslint-lsp",
       },
     },
   },
@@ -64,6 +67,12 @@ return {
         },
       })
       vim.lsp.enable("basedpyright")
+
+      vim.lsp.config("ts_ls", {})
+      vim.lsp.enable("ts_ls")
+
+      vim.lsp.config("eslint", {})
+      vim.lsp.enable("eslint")
     end,
   },
   {

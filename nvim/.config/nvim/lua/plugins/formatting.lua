@@ -8,6 +8,10 @@ return {
         lua = { "stylua" },
         cs = { "csharpier" },
         python = { "ruff_format" },
+        javascript = { "prettierd" },
+        javascriptreact = { "prettierd" },
+        typescript = { "prettierd" },
+        typescriptreact = { "prettierd" },
       },
       format_on_save = {
         lsp_format = "fallback",
