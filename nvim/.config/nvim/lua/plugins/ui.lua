@@ -1,13 +1,22 @@
 return {
   {
+    "nvim-mini/mini.icons",
+    lazy = true,
+    opts = {},
+    init = function()
+      package.preload["nvim-web-devicons"] = function()
+        require("mini.icons").mock_nvim_web_devicons()
+        return package.loaded["nvim-web-devicons"]
+      end
+    end,
+  },
+  {
     "akinsho/bufferline.nvim",
-    dependencies = "nvim-tree/nvim-web-devicons",
     event = { "BufAdd", "BufDelete" },
     opts = {},
   },
   {
     "nvim-lualine/lualine.nvim",
-    dependencies = "nvim-tree/nvim-web-devicons",
     event = "VeryLazy",
     opts = {
       options = {
