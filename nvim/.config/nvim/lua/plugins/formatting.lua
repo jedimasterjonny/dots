@@ -14,6 +14,8 @@ return {
         typescriptreact = { "prettierd" },
         json = { "prettierd" },
         jsonc = { "prettierd" },
+        html = { "prettierd" },
+        svelte = {},
       },
       format_on_save = {
         lsp_format = "fallback",

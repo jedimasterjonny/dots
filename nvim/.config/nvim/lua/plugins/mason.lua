@@ -20,6 +20,8 @@ return {
         "typescript-language-server",
         "prettierd",
         "eslint-lsp",
+        "html-lsp",
+        "svelte-language-server",
       },
     },
   },
@@ -73,6 +75,12 @@ return {
 
       vim.lsp.config("eslint", {})
       vim.lsp.enable("eslint")
+
+      vim.lsp.config("html", {})
+      vim.lsp.enable("html")
+
+      vim.lsp.config("svelte", {})
+      vim.lsp.enable("svelte")
     end,
   },
   {
