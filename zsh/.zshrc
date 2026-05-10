@@ -37,3 +37,8 @@ fi
 if [ -d "$HOME/jonnyoc-bin" ]; then
   export PATH="$HOME/jonnyoc-bin:$PATH"
 fi
+
+## direnv
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi

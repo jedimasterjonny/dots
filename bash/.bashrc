@@ -148,3 +148,8 @@ if [ -n "$HOMEBREW_PREFIX" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
   fi
   unset _npm_prefix_cache npm_prefix
 fi
+
+## direnv
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi
