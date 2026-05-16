@@ -11,3 +11,15 @@
 # ridden in every subshell.
 
 test -s ~/.alias && . ~/.alias || true
+
+## editor
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR=nvim
+else
+  export EDITOR=vim
+fi
+
+## direnv
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi
