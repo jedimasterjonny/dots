@@ -3,6 +3,7 @@
 	email = 46541898+jedimasterjonny@users.noreply.github.com
 [init]
 	defaultBranch = main
+	defaultRefFormat = files
 [pull]
 	rebase = true
 [rerere]
