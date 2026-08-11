@@ -15,6 +15,8 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 | `git`         | `~/.gitconfig`                                                  |
 | `nvim`        | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim`  |
 | `code`        | VS Code `settings.json`                                         |
+| `tmux`        | `~/.tmux.conf`                                                  |
+| `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                         |
 
 `bash-suse` and `bash-ubuntu` both install `~/.bashrc`, so stow only the one matching the
 machine — `stow */` fails on the conflict.
@@ -28,7 +30,7 @@ direnv) and selects the bash or zsh variant of each hook at runtime.
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell git nvim code
+stow shell git nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 
