@@ -18,7 +18,10 @@ fi
 # Listed lowest-priority first; each is prepended, so the last one wins.
 for _dir in "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
   if [ -d "$_dir" ]; then
-    PATH="$_dir:$PATH"
+    case ":$PATH:" in
+      *":$_dir:"*) ;;
+      *) PATH="$_dir:$PATH" ;;
+    esac
   fi
 done
 export PATH
@@ -42,17 +45,25 @@ if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
   [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && . "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
   [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && . "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
 
-  # Cache npm prefix to avoid a slow npm call on every shell start
-  _npm_prefix_cache="${XDG_CACHE_HOME:-$HOME/.cache}/npm_global_prefix"
+  # Cache npm prefix to avoid a slow npm call on every shell start. Keyed by
+  # node version: nvm switches change the prefix, and a single cache file would
+  # pin PATH to whichever version happened to be current when it was written.
+  _node_ver=$(node --version 2>/dev/null || echo none)
+  _npm_prefix_cache="${XDG_CACHE_HOME:-$HOME/.cache}/npm_global_prefix.$_node_ver"
   if [ ! -f "$_npm_prefix_cache" ]; then
     mkdir -p "$(dirname "$_npm_prefix_cache")"
     npm config --global get prefix > "$_npm_prefix_cache" 2>/dev/null
   fi
   _npm_prefix=$(cat "$_npm_prefix_cache" 2>/dev/null)
-  if [ -n "$_npm_prefix" ]; then
-    export PATH="$PATH:$_npm_prefix"
+  # Executables live in $prefix/bin, not $prefix itself.
+  if [ -n "$_npm_prefix" ] && [ -d "$_npm_prefix/bin" ]; then
+    case ":$PATH:" in
+      *":$_npm_prefix/bin:"*) ;;
+      *) PATH="$PATH:$_npm_prefix/bin" ;;
+    esac
+    export PATH
   fi
-  unset _npm_prefix_cache _npm_prefix
+  unset _node_ver _npm_prefix_cache _npm_prefix
 fi
 
 ## direnv
