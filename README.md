@@ -40,6 +40,28 @@ To remove a package:
 stow -D zsh
 ```
 
+### tmux plugins
+
+`~/.tmux.conf` declares its plugins for [tpm](https://github.com/tmux-plugins/tpm) but does
+not bootstrap tpm itself. The `tmux-powerline` package supplies only that plugin's config —
+the plugin code comes from tpm — so a fresh machine needs tpm cloned first:
+
+```sh
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
+With tmux already running, `prefix + I` fetches the plugins. Outside tmux the equivalent is
+`~/.tmux/plugins/tpm/bin/install_plugins`, but it reads `TMUX_PLUGIN_MANAGER_PATH` from a
+running server and aborts with `FATAL: Tmux Plugin Manager not configured in tmux.conf`
+without one. So on a fresh machine source the config, install, then source again — the
+plugins are not on disk to load during the first pass:
+
+```sh
+tmux source-file ~/.tmux.conf
+~/.tmux/plugins/tpm/bin/install_plugins
+tmux source-file ~/.tmux.conf
+```
+
 ## Notes
 
 `.stowrc` sets `--no-folding`, so stow links individual files rather than whole
