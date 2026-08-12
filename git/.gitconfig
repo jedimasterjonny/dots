@@ -6,6 +6,15 @@
 	defaultRefFormat = files
 [pull]
 	rebase = true
+[push]
+	# Pair for pull.rebase above: new branches push without --set-upstream.
+	autoSetupRemote = true
+[diff]
+	algorithm = histogram
+[merge]
+	# zdiff3 keeps the common ancestor in a conflict, like diff3, but hoists the
+	# lines both sides agree on out of the marked region.
+	conflictstyle = zdiff3
 [rerere]
 	enabled = true
 
