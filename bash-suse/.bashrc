@@ -12,5 +12,11 @@
 
 test -s ~/.alias && . ~/.alias || true
 
+## history
+HISTCONTROL=ignoreboth
+HISTSIZE=50000
+HISTFILESIZE=50000
+shopt -s histappend
+
 ## shared config (stow package: shell)
 [ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
