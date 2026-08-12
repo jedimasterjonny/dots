@@ -8,3 +8,9 @@
 	rebase = true
 [rerere]
 	enabled = true
+
+# Machine-local overrides — work identities, per-org settings. Untracked and
+# absent from this repo. Git skips a missing include silently, so a fresh
+# machine needs no extra setup.
+[include]
+	path = ~/.gitconfig-local
