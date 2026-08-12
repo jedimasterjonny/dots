@@ -2,6 +2,12 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+## shared environment (stow package: shell)
+# Above the interactive guard below: bash reads this file for `ssh host 'cmd'`
+# too, and PATH should match openSUSE's there. common.sh is environment only, so
+# it stays silent and cheap; the interactive half is sourced at the very bottom.
+[ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -120,5 +126,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-## shared config (stow package: shell)
-[ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
+## shared interactive config (stow package: shell)
+# Last, after the aliases and PS1 above, so anything it defines outranks them.
+[ -f "$HOME/.config/shell/interactive.sh" ] && . "$HOME/.config/shell/interactive.sh"

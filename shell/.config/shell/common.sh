@@ -1,5 +1,10 @@
 # Shared shell config, sourced by ~/.bashrc and ~/.zshrc.
 # Keep this POSIX sh: it is read by both bash and zsh.
+#
+# Environment only — PATH, EDITOR and the tools that populate them — so that a
+# non-interactive `ssh host 'cmd'` can source this and get the same PATH it would
+# get at a prompt. Everything that shapes a session rather than the environment
+# lives in interactive.sh, which each rc file sources later on.
 
 if [ -n "${ZSH_VERSION:-}" ]; then
   _shell=zsh
@@ -55,16 +60,17 @@ else
 fi
 
 ## gcloud
-if [ -d "$HOME/google-cloud-sdk" ]; then
-  [ -s "$HOME/google-cloud-sdk/path.$_shell.inc" ] && . "$HOME/google-cloud-sdk/path.$_shell.inc"
-  [ -s "$HOME/google-cloud-sdk/completion.$_shell.inc" ] && . "$HOME/google-cloud-sdk/completion.$_shell.inc"
+# Path half only — it puts gcloud on PATH, so a remote `ssh host 'gcloud …'`
+# needs it. The completions are interactive-only and live in interactive.sh.
+if [ -s "$HOME/google-cloud-sdk/path.$_shell.inc" ]; then
+  . "$HOME/google-cloud-sdk/path.$_shell.inc"
 fi
 
 ## nvm
+# Same split: nvm.sh is what puts node on PATH, its completions are not.
 if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && . "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
-  [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && . "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
 fi
 
 ## npm global bin
@@ -93,13 +99,5 @@ if command -v npm >/dev/null 2>&1; then
   fi
   unset _node_ver _npm_prefix_cache _npm_prefix
 fi
-
-## direnv
-if command -v direnv >/dev/null 2>&1; then
-  eval "$(direnv hook "$_shell")"
-fi
-
-## local aliases
-[ -f "$HOME/goog-aliases" ] && . "$HOME/goog-aliases"
 
 unset _shell

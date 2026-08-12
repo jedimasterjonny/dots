@@ -19,4 +19,8 @@ HISTFILESIZE=50000
 shopt -s histappend
 
 ## shared config (stow package: shell)
+# interactive.sh comes last, after ~/.alias above, so its aliases win. It gates
+# itself on $-, which matters here: this file has no non-interactive guard, and
+# bash reads it for `ssh host 'cmd'` too.
 [ -f "$HOME/.config/shell/common.sh" ] && . "$HOME/.config/shell/common.sh"
+[ -f "$HOME/.config/shell/interactive.sh" ] && . "$HOME/.config/shell/interactive.sh"

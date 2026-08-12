@@ -21,9 +21,19 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 `bash-suse` and `bash-ubuntu` both install `~/.bashrc`, so stow only the one matching the
 machine — `stow */` fails on the conflict.
 
-Each shell package sources `~/.config/shell/common.sh` when it exists, so stow `shell`
-alongside them. That file holds the setup they share (`EDITOR`, `PATH`, brew, gcloud, nvm,
-direnv) and selects the bash or zsh variant of each hook at runtime.
+Each shell package sources two files from the `shell` package when they exist, so stow
+`shell` alongside them. `common.sh` holds the environment they share — `EDITOR`, `PATH`,
+brew, gcloud, nvm, npm — and `interactive.sh` holds the session setup that only means
+anything at a prompt: completions, the direnv hook, aliases. Both select the bash or zsh
+variant of each hook at runtime.
+
+The split exists because the two halves want opposite positions in an rc file.
+`common.sh` is sourced early, before `bash-ubuntu`'s inherited non-interactive guard, so
+that `ssh host 'cmd'` gets the same `PATH` on either distro — which in turn means it must
+stay silent, since `scp` and `rsync` parse that stream as their own protocol.
+`interactive.sh` is sourced last, after each distro's own aliases and `PS1`, so that what
+it defines outranks them. It gates itself on `$-` rather than trusting the caller, because
+`bash-suse` has no non-interactive guard to hide behind.
 
 ## Install
 
