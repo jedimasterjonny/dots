@@ -12,6 +12,7 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 | `bash-suse`   | `~/.bashrc` for openSUSE                                        |
 | `bash-ubuntu` | `~/.bashrc` for Ubuntu/Debian                                   |
 | `zsh`         | `~/.zshrc`                                                      |
+| `readline`    | `~/.inputrc`                                                    |
 | `git`         | `~/.gitconfig`                                                  |
 | `nvim`        | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim`  |
 | `code`        | VS Code `settings.json`                                         |
@@ -20,6 +21,14 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 
 `bash-suse` and `bash-ubuntu` both install `~/.bashrc`, so stow only the one matching the
 machine — `stow */` fails on the conflict.
+
+`readline` applies to every readline program, not just bash, which is why it is its own
+package rather than part of a bash one. Its `~/.inputrc` opens with `$include /etc/inputrc`
+because readline reads a single init file and does not merge: the mere existence of
+`~/.inputrc` would otherwise drop the distro's arrow-key and word-motion bindings. What it
+adds is `enable-bracketed-paste`, so a multi-line paste lands in the buffer as one editable
+command instead of executing a line at every newline. Bash has defaulted that on since 5.1,
+but openSUSE's build reports it off with no init file at all, so it is set explicitly.
 
 Each shell package sources two files from the `shell` package when they exist, so stow
 `shell` alongside them. `common.sh` holds the environment they share — `EDITOR`, `PATH`,
@@ -40,7 +49,7 @@ it defines outranks them. It gates itself on `$-` rather than trusting the calle
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell git nvim code tmux tmux-powerline
+stow shell readline git nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 

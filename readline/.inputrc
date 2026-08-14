@@ -1,0 +1,15 @@
+# Readline reads exactly one init file and does not merge them: $INPUTRC if
+# set, else ~/.inputrc, else /etc/inputrc. Creating this file therefore takes
+# /etc/inputrc out of the picture, and on openSUSE that is where the arrow-key
+# and word-motion bindings live. Include it first, then override below.
+$include /etc/inputrc
+
+# Paste as text rather than as keystrokes. Without this every newline in a
+# multi-line paste submits the line it ends, so pasting rendered output into
+# the prompt executes each line in turn and leaves the prose in ~/.bash_history
+# where Ctrl-R has to search past it. With it the paste arrives as one editable
+# buffer that Ctrl-C discards.
+#
+# Bash enables this by default from 5.1, but the bash 5.3 here reports it off
+# with no init file at all, so set it explicitly rather than relying on that.
+set enable-bracketed-paste on
