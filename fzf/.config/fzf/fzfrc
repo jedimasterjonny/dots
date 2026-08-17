@@ -1,0 +1,42 @@
+# Default options for fzf, read only because ~/.config/shell/interactive.sh
+# points $FZF_DEFAULT_OPTS_FILE here — fzf has no default config location.
+# Needs fzf 0.47 or newer, the release that added the file.
+#
+# Parsed as command-line arguments, with # comments. Lowest precedence of the
+# three sources: $FZF_DEFAULT_OPTS and any flag passed at the call site both
+# still win, so a script that wants different behaviour just asks for it.
+
+## window
+# Draw in place rather than full-screen, and take less than the 40% when the
+# list is shorter, so whatever was on screen before the picker survives it.
+--height=~40%
+
+# First match nearest the cursor, which is where the eye already is, instead of
+# at the far end of a list growing down the screen.
+--layout=reverse
+
+--border=rounded
+--info=inline-right
+
+## movement
+--cycle
+
+# Multi-select everywhere. Tab has to be pressed for it to change any outcome,
+# so a caller expecting one line still gets one line unless asked otherwise.
+--multi
+--bind=alt-a:toggle-all
+
+# Both bindings are the same key: ctrl-/ is what it is called, ctrl-_ is what
+# most terminals actually send for it, and which one arrives is not worth
+# finding out per machine.
+--bind=ctrl-/:toggle-preview
+--bind=ctrl-_:toggle-preview
+
+## colours
+# catppuccin macchiato, verbatim from catppuccin/fzf, to match the nvim
+# colourscheme and the tmux-powerline theme.
+--color=bg+:#363A4F,bg:#24273A,spinner:#F4DBD6,hl:#ED8796
+--color=fg:#CAD3F5,header:#ED8796,info:#C6A0F6,pointer:#F4DBD6
+--color=marker:#B7BDF8,fg+:#CAD3F5,prompt:#C6A0F6,hl+:#ED8796
+--color=selected-bg:#494D64
+--color=border:#6E738D,label:#CAD3F5

@@ -15,6 +15,7 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 | `readline`    | `~/.inputrc`                                                    |
 | `git`         | `~/.gitconfig`                                                  |
 | `ripgrep`     | `~/.config/ripgrep/ripgreprc`                                   |
+| `fzf`         | `~/.config/fzf/fzfrc`                                           |
 | `nvim`        | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim`  |
 | `code`        | VS Code `settings.json`                                         |
 | `tmux`        | `~/.tmux.conf`                                                  |
@@ -45,21 +46,28 @@ stay silent, since `scp` and `rsync` parse that stream as their own protocol.
 it defines outranks them. It gates itself on `$-` rather than trusting the caller, because
 `bash-suse` has no non-interactive guard to hide behind.
 
-`ripgrep` needs the `shell` package alongside it, because ripgrep has no default config
-location: its file stays inert until `RIPGREP_CONFIG_PATH` names one. That export is
-guarded on the file existing, which is load-bearing rather than tidy — a
-`RIPGREP_CONFIG_PATH` pointing at nothing makes every single `rg` call print a read error.
+`ripgrep` and `fzf` need the `shell` package alongside them, for the same reason as each
+other: neither tool has a default config location, so both files stay inert until an
+environment variable names them. That variable is guarded on the file existing, which for
+ripgrep is load-bearing rather than tidy — a `RIPGREP_CONFIG_PATH` pointing at nothing
+makes every single `rg` call print a read error.
 
-Which rc file exports it follows the split above: `ssh host 'rg …'` deserves the same
-defaults as `rg` at a prompt, so it goes in `common.sh`. The package configures ripgrep
-without installing it.
+Which rc file exports it follows the split above. `ssh host 'rg …'` deserves the same
+defaults as `rg` at a prompt, so `RIPGREP_CONFIG_PATH` is set in `common.sh`; fzf is a
+full-screen picker a remote command can do nothing with, so `FZF_DEFAULT_OPTS_FILE`, the
+`fzf --bash`/`--zsh` key bindings and the `FZF_DEFAULT_COMMAND` that sends a bare `fzf`
+through `rg --files` all sit in `interactive.sh`. `FZF_CTRL_T_COMMAND` is left unset on
+purpose: CTRL-T then keeps fzf's built-in walker, which offers the directories and the
+gitignored-but-wanted files that `rg --files` drops. Neither package installs the tool it
+configures, and the key bindings need fzf 0.48 or newer — earlier versions shipped them
+as separate scripts.
 
 ## Install
 
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell readline git ripgrep nvim code tmux tmux-powerline
+stow shell readline git ripgrep fzf nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 

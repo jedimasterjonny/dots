@@ -41,6 +41,34 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook "$_shell")"
 fi
 
+## fzf
+# All of it interactive-only, unlike ripgrep's half of the same pair in
+# common.sh: fzf is a full-screen picker, so neither its defaults nor its key
+# bindings mean anything to `ssh host 'cmd'`.
+_fzf_opts="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzfrc"
+if [ -f "$_fzf_opts" ]; then
+  export FZF_DEFAULT_OPTS_FILE="$_fzf_opts"
+fi
+unset _fzf_opts
+
+if command -v fzf >/dev/null 2>&1; then
+  # Send a bare `fzf` through rg for the one thing fzf's own walker cannot do:
+  # the walker skips .git and node_modules by name but reads no .gitignore, so
+  # build output and vendored trees come back with everything else.
+  #
+  # FZF_DEFAULT_COMMAND only, deliberately — leaving FZF_CTRL_T_COMMAND unset
+  # keeps CTRL-T on that walker, which offers directories and reaches
+  # gitignored-but-wanted files like .env, neither of which `rg --files` lists.
+  if command -v rg >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='rg --files'
+  fi
+
+  # Key bindings and completion in one call, which needs fzf 0.48 or newer —
+  # before that the two shipped as separate scripts under the install prefix,
+  # and this prints an unknown-option error instead.
+  eval "$(fzf --"$_shell")"
+fi
+
 ## local aliases
 [ -f "$HOME/goog-aliases" ] && . "$HOME/goog-aliases"
 
