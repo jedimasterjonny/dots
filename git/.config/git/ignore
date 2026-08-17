@@ -1,0 +1,11 @@
+# Global gitignore, read by git at this path with no config pointing at it —
+# core.excludesFile is unset, and this is the default it falls back to.
+#
+# For patterns that follow the machine rather than the project: files a local
+# tool drops into any checkout, which every repo would otherwise have to ignore
+# on its own. Anything inherent to a project belongs in that project's
+# .gitignore instead, where collaborators get it too.
+
+# Claude Code writes per-checkout permissions here. Machine-local by design,
+# and never the same twice, so no shared .gitignore can be relied on to cover it.
+**/.claude/settings.local.json
