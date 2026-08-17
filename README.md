@@ -14,6 +14,7 @@ Each top-level directory is a stow package whose contents mirror the layout of `
 | `zsh`         | `~/.zshrc`                                                      |
 | `readline`    | `~/.inputrc`                                                    |
 | `git`         | `~/.gitconfig`                                                  |
+| `ripgrep`     | `~/.config/ripgrep/ripgreprc`                                   |
 | `nvim`        | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim`  |
 | `code`        | VS Code `settings.json`                                         |
 | `tmux`        | `~/.tmux.conf`                                                  |
@@ -44,12 +45,21 @@ stay silent, since `scp` and `rsync` parse that stream as their own protocol.
 it defines outranks them. It gates itself on `$-` rather than trusting the caller, because
 `bash-suse` has no non-interactive guard to hide behind.
 
+`ripgrep` needs the `shell` package alongside it, because ripgrep has no default config
+location: its file stays inert until `RIPGREP_CONFIG_PATH` names one. That export is
+guarded on the file existing, which is load-bearing rather than tidy — a
+`RIPGREP_CONFIG_PATH` pointing at nothing makes every single `rg` call print a read error.
+
+Which rc file exports it follows the split above: `ssh host 'rg …'` deserves the same
+defaults as `rg` at a prompt, so it goes in `common.sh`. The package configures ripgrep
+without installing it.
+
 ## Install
 
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell readline git nvim code tmux tmux-powerline
+stow shell readline git ripgrep nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 

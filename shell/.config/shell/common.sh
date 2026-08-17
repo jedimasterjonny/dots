@@ -59,6 +59,22 @@ else
   export EDITOR=vim
 fi
 
+## ripgrep
+# ripgrep reads no config file unless RIPGREP_CONFIG_PATH names one, so the
+# ripgrep package does nothing without this. Here rather than in
+# interactive.sh because `ssh host 'rg …'` is as ordinary as rg at a prompt,
+# and the two should search by the same rules.
+#
+# Guarded on the file, unlike the other blocks here, for a reason beyond
+# tidiness: pointing the variable at a path that does not exist makes every
+# single rg invocation print a "failed to read the file" error, so a machine
+# without the package stowed is better off with it unset.
+_rg_config="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/ripgreprc"
+if [ -f "$_rg_config" ]; then
+  export RIPGREP_CONFIG_PATH="$_rg_config"
+fi
+unset _rg_config
+
 ## gcloud
 # Path half only — it puts gcloud on PATH, so a remote `ssh host 'gcloud …'`
 # needs it. The completions are interactive-only and live in interactive.sh.

@@ -1,0 +1,44 @@
+# Default flags for ripgrep, read only because ~/.config/shell/common.sh points
+# $RIPGREP_CONFIG_PATH here — ripgrep has no default config location and reads
+# nothing without it.
+#
+# One argument per line. No shell parses this file, so quotes and spaces are
+# literal characters: write --glob=!.git, never --glob='!.git'.
+
+## case
+# Literal-lowercase patterns match either case; the moment a pattern carries an
+# uppercase letter it is taken as deliberate and the search turns sensitive.
+--smart-case
+
+## hidden files
+# The repos this searches most are dotfiles, where nearly every interesting
+# path starts with a dot and ripgrep's default would skip all of them.
+--hidden
+
+# Pairs with --hidden above. .gitignore never lists .git, so unhiding hidden
+# entries drops the whole object database into every result set. Written
+# without a slash so it matches at any depth: the anchored form ripgrep's own
+# example uses, --glob=!.git/*, resolves against the working directory and
+# stops excluding anything once a path is named on the command line.
+--glob=!.git
+
+# Also downstream of --hidden, and the reason it is not a free flag. Inside a
+# repo .gitignore does the work; outside one there is nothing to lean on, and a
+# search rooted at $HOME walks every cache in it. These two lines are the
+# difference between 1.4M paths and 100k on this machine.
+--glob=!.cache
+--glob=!.npm
+
+## long lines
+# --max-columns is deliberately absent. It looks display-only, but this file is
+# read by every caller of rg rather than only the one at a terminal: with it
+# set, `rg --vimgrep` returns a truncated line with "[... N more matches]"
+# glued on the end, and nvim's pickers — which inherit RIPGREP_CONFIG_PATH from
+# the shell that launched them — show that stub in place of the match. Worth
+# passing by hand on the rare search that needs it.
+
+## regex engine
+# Fall back to PCRE2 only for patterns the default engine cannot compile, so
+# look-around and backreferences work without remembering --pcre2 and without
+# giving up the faster engine on every other search.
+--engine=auto
