@@ -1,97 +1,56 @@
 # dots
 
-Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal dotfiles for openSUSE and Ubuntu, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-Each top-level directory is a stow package whose contents mirror the layout of `$HOME`.
+Each top-level directory is a stow package mirroring `$HOME`. Stowing one symlinks its
+files into place; `stow -D` removes them. No package installs the tool it configures.
 
 ## Packages
 
-| Package       | Installs                                                       |
-| ------------- | -------------------------------------------------------------- |
-| `shell`       | `~/.config/shell/common.sh`, shared by every shell below        |
-| `bash-suse`   | `~/.bashrc` for openSUSE                                        |
-| `bash-ubuntu` | `~/.bashrc` for Ubuntu/Debian                                   |
-| `zsh`         | `~/.zshrc`                                                      |
-| `readline`    | `~/.inputrc`                                                    |
-| `git`         | `~/.gitconfig`                                                  |
-| `ripgrep`     | `~/.config/ripgrep/ripgreprc`                                   |
-| `fzf`         | `~/.config/fzf/fzfrc`                                           |
-| `nvim`        | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim`  |
-| `code`        | VS Code `settings.json`                                         |
-| `tmux`        | `~/.tmux.conf`                                                  |
-| `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                         |
-
-`bash-suse` and `bash-ubuntu` both install `~/.bashrc`, so stow only the one matching the
-machine — `stow */` fails on the conflict.
-
-`readline` applies to every readline program, not just bash, which is why it is its own
-package rather than part of a bash one. Its `~/.inputrc` opens with `$include /etc/inputrc`
-because readline reads a single init file and does not merge: the mere existence of
-`~/.inputrc` would otherwise drop the distro's arrow-key and word-motion bindings. What it
-adds is `enable-bracketed-paste`, so a multi-line paste lands in the buffer as one editable
-command instead of executing a line at every newline. Bash has defaulted that on since 5.1,
-but openSUSE's build reports it off with no init file at all, so it is set explicitly.
-
-Each shell package sources two files from the `shell` package when they exist, so stow
-`shell` alongside them. `common.sh` holds the environment they share — `EDITOR`, `PATH`,
-brew, gcloud, nvm, npm — and `interactive.sh` holds the session setup that only means
-anything at a prompt: completions, the direnv hook, aliases. Both select the bash or zsh
-variant of each hook at runtime.
-
-The split exists because the two halves want opposite positions in an rc file.
-`common.sh` is sourced early, before `bash-ubuntu`'s inherited non-interactive guard, so
-that `ssh host 'cmd'` gets the same `PATH` on either distro — which in turn means it must
-stay silent, since `scp` and `rsync` parse that stream as their own protocol.
-`interactive.sh` is sourced last, after each distro's own aliases and `PS1`, so that what
-it defines outranks them. It gates itself on `$-` rather than trusting the caller, because
-`bash-suse` has no non-interactive guard to hide behind.
-
-`ripgrep` and `fzf` need the `shell` package alongside them, for the same reason as each
-other: neither tool has a default config location, so both files stay inert until an
-environment variable names them. That variable is guarded on the file existing, which for
-ripgrep is load-bearing rather than tidy — a `RIPGREP_CONFIG_PATH` pointing at nothing
-makes every single `rg` call print a read error.
-
-Which rc file exports it follows the split above. `ssh host 'rg …'` deserves the same
-defaults as `rg` at a prompt, so `RIPGREP_CONFIG_PATH` is set in `common.sh`; fzf is a
-full-screen picker a remote command can do nothing with, so `FZF_DEFAULT_OPTS_FILE`, the
-`fzf --bash`/`--zsh` key bindings and the `FZF_DEFAULT_COMMAND` that sends a bare `fzf`
-through `rg --files` all sit in `interactive.sh`. `FZF_CTRL_T_COMMAND` is left unset on
-purpose: CTRL-T then keeps fzf's built-in walker, which offers the directories and the
-gitignored-but-wanted files that `rg --files` drops. Neither package installs the tool it
-configures, and the key bindings need fzf 0.48 or newer — earlier versions shipped them
-as separate scripts.
+| Package          | Installs                                                       | Needs   |
+| ---------------- | -------------------------------------------------------------- | ------- |
+| `shell`          | `~/.config/shell/{common,interactive}.sh`                      |         |
+| `bash-suse`      | `~/.bashrc` for openSUSE                                       | `shell` |
+| `bash-ubuntu`    | `~/.bashrc` for Ubuntu/Debian                                  | `shell` |
+| `zsh`            | `~/.zshrc`                                                     | `shell` |
+| `readline`       | `~/.inputrc`                                                   |         |
+| `git`            | `~/.gitconfig`, `~/.config/git/ignore`                         |         |
+| `ssh`            | `~/.ssh/config`                                                |         |
+| `gh`             | `~/.config/gh/config.yml`                                      |         |
+| `ripgrep`        | `~/.config/ripgrep/ripgreprc`                                  | `shell` |
+| `fzf`            | `~/.config/fzf/fzfrc`                                          | `shell` |
+| `nvim`           | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim` |         |
+| `code`           | VS Code `settings.json`                                        |         |
+| `tmux`           | `~/.tmux.conf`                                                 | tpm     |
+| `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                           | tpm     |
 
 ## Install
 
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell readline git ripgrep fzf nvim code tmux tmux-powerline
+stow shell readline git ssh gh ripgrep fzf nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 
-To remove a package:
+`stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes
+a package, `stow -R` relinks one after a pull adds files to it.
 
-```sh
-stow -D zsh
-```
+`~/.gitconfig-local` and `~/.ssh/config.local` hold the work identities and host names that
+cannot be public. Both are optional — git and ssh skip a missing include silently.
 
 ### tmux plugins
 
 `~/.tmux.conf` declares its plugins for [tpm](https://github.com/tmux-plugins/tpm) but does
-not bootstrap tpm itself. The `tmux-powerline` package supplies only that plugin's config —
-the plugin code comes from tpm — so a fresh machine needs tpm cloned first:
+not bootstrap tpm, and `tmux-powerline` ships only that plugin's config. So clone tpm first:
 
 ```sh
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
-With tmux already running, `prefix + I` fetches the plugins. Outside tmux the equivalent is
-`~/.tmux/plugins/tpm/bin/install_plugins`, but it reads `TMUX_PLUGIN_MANAGER_PATH` from a
-running server and aborts with `FATAL: Tmux Plugin Manager not configured in tmux.conf`
-without one. So on a fresh machine source the config, install, then source again — the
-plugins are not on disk to load during the first pass:
+Inside tmux, `prefix + I` fetches the plugins. Outside it, `install_plugins` reads
+`TMUX_PLUGIN_MANAGER_PATH` from a running server and aborts without one — and the plugins
+are not on disk to load on the first pass. Hence source, install, source:
 
 ```sh
 tmux source-file ~/.tmux.conf
@@ -101,10 +60,43 @@ tmux source-file ~/.tmux.conf
 
 ## Notes
 
-`.stowrc` sets `--no-folding`, so stow links individual files rather than whole
-directories. Files a tool writes back into a stowed directory (`lazy-lock.json` and
-`lazyvim.json` in `~/.config/nvim`) therefore land in a real directory outside the repo,
-rather than showing up as untracked files here.
-
-Neovim plugins are deliberately not pinned: `lazy-lock.json` stays out of the repo, so a
-fresh machine installs each plugin at its latest commit. Run `:Lazy sync` to update.
+- **`shell`** — `common.sh` is environment (`EDITOR`, `PATH`, brew, gcloud, nvm, npm),
+  sourced first so `ssh host 'cmd'` gets the same `PATH` on either distro, and silent for
+  the same reason: `scp` and `rsync` parse that stream as their own protocol.
+  `interactive.sh` is prompt-only (completions, direnv, fzf, aliases), sourced last so it
+  outranks each distro's own aliases and `PS1`, and gates on `$-` itself because
+  `bash-suse` has no non-interactive guard to hide behind.
+- **`readline`** — Its own package because `~/.inputrc` applies to every readline program,
+  not just bash. It opens with `$include /etc/inputrc` since readline reads one init file
+  and does not merge, so its mere existence would drop the distro's arrow-key and
+  word-motion bindings; the one addition is `enable-bracketed-paste`, which makes a
+  multi-line paste arrive as a single editable command instead of executing a line at
+  every newline — on by default in bash since 5.1, but openSUSE's build reports it off
+  with no init file present.
+- **`git`** — Nothing points at `~/.config/git/ignore`: `core.excludesFile` is unset and
+  this is the path git falls back to. It holds patterns that follow the machine rather
+  than the project.
+- **`ssh`** — `Include ~/.ssh/config.local` has to be the first line: ssh keeps the
+  *first* value it reads for a keyword, the reverse of git, so a `Host *` block above it
+  would win every override. Control sockets go to `/run/user/%i/ssh-%C`, a tmpfs logind
+  clears on logout, with `%C` hashing the destination to fit the ~104 byte limit on a unix
+  socket path.
+- **`gh`** — Only the keys that differ from gh's defaults. `hosts.yml` holds the OAuth
+  token and stays untracked beside it, which is what `--no-folding` guards; gh rewrites
+  the file in place through the symlink, so an alias added at the prompt shows up here as
+  an ordinary edit.
+- **`ripgrep`** — Inert without `shell`, since ripgrep reads no config unless
+  `RIPGREP_CONFIG_PATH` names one. Set in `common.sh` so `ssh host 'rg …'` searches by the
+  same rules as a prompt, and guarded on the file existing: pointing it at nothing makes
+  every single `rg` call print a read error.
+- **`fzf`** — Inert without `shell` too, but set up in `interactive.sh` — a remote command
+  can do nothing with a full-screen picker. A bare `fzf` goes through `rg --files`, while
+  `FZF_CTRL_T_COMMAND` is left unset on purpose so CTRL-T keeps fzf's own walker, which
+  offers the directories and gitignored-but-wanted files that `rg --files` drops. The key
+  bindings need fzf 0.48 or newer.
+- **`nvim`** — Plugins are deliberately unpinned: `lazy-lock.json` stays out of the repo,
+  so a fresh machine takes each at its latest commit. `:Lazy sync` to update.
+- **Stow** — `.stowrc` sets `--no-folding`, so stow links individual files rather than
+  whole directories. Files a tool writes back into a stowed directory (`lazy-lock.json`
+  and `lazyvim.json` in `~/.config/nvim`) then land in a real directory outside the repo,
+  rather than showing up as untracked files here.
