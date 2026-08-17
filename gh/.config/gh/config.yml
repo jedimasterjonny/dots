@@ -1,0 +1,18 @@
+# Only the keys that differ from gh's defaults. gh ships this file as a fully
+# commented dump of every setting at its default value, and an absent key falls
+# back to exactly that default, so the rest is noise between the two lines that
+# mean anything.
+#
+# No blank lines anywhere below, deliberately. gh rewrites this file in place
+# on `gh config set` and `gh alias set`, keeping comments that sit directly
+# above a key — a blank line detaches a comment from the key under it, and the
+# rewrite drops it. The trailing version key is gh's own, appended on first
+# write; it is kept here so a plain `gh` run leaves the working tree clean.
+#
+# Clone, and add remotes, over HTTPS: gh's own token then authenticates git as
+# well, so a machine that has run `gh auth login` needs no key of its own.
+git_protocol: https
+# `gh co 123` checks out that PR as a local branch.
+aliases:
+    co: pr checkout
+version: "1"
