@@ -70,6 +70,6 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 ## local aliases
-[ -f "$HOME/goog-aliases" ] && . "$HOME/goog-aliases"
+[ -f "$HOME/.goog-aliases" ] && . "$HOME/.goog-aliases"
 
 unset _shell
