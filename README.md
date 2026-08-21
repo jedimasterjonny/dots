@@ -9,7 +9,7 @@ files into place; `stow -D` removes them. No package installs the tool it config
 
 | Package          | Installs                                                       | Needs   |
 | ---------------- | -------------------------------------------------------------- | ------- |
-| `shell`          | `~/.config/shell/{common,interactive}.sh`                      |         |
+| `shell`          | `~/.config/shell/{common,interactive}.sh`, `~/.profile`        |         |
 | `bash-suse`      | `~/.bashrc` for openSUSE                                       | `shell` |
 | `bash-ubuntu`    | `~/.bashrc` for Ubuntu/Debian                                  | `shell` |
 | `zsh`            | `~/.zshrc`                                                     | `shell` |
@@ -60,12 +60,13 @@ tmux source-file ~/.tmux.conf
 
 ## Notes
 
-- **`shell`** — `common.sh` is environment (`EDITOR`, `PATH`, brew, gcloud, nvm, npm),
-  sourced first so `ssh host 'cmd'` gets the same `PATH` on either distro, and silent for
-  the same reason: `scp` and `rsync` parse that stream as their own protocol.
-  `interactive.sh` is prompt-only (completions, direnv, fzf, aliases), sourced last so it
-  outranks each distro's own aliases and `PS1`, and gates on `$-` itself because
-  `bash-suse` has no non-interactive guard to hide behind.
+- **`shell`** — `~/.profile` sets up login shell / session environment, delegating
+  to `common.sh` and sourcing `.bashrc` if running bash. `common.sh` is environment
+  (`EDITOR`, `PATH`, brew, gcloud, nvm, npm), sourced first so `ssh host 'cmd'` gets the
+  same `PATH` on either distro, and silent for the same reason: `scp` and `rsync` parse
+  that stream as their own protocol. `interactive.sh` is prompt-only (completions, direnv,
+  fzf, aliases), sourced last so it outranks each distro's own aliases and `PS1`, and
+  gates on `$-` itself because `bash-suse` has no non-interactive guard to hide behind.
 - **`readline`** — Its own package because `~/.inputrc` applies to every readline program,
   not just bash. It opens with `$include /etc/inputrc` since readline reads one init file
   and does not merge, so its mere existence would drop the distro's arrow-key and
