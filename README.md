@@ -1,6 +1,6 @@
 # dots
 
-Personal dotfiles for openSUSE and Ubuntu, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal dotfiles for openSUSE, Ubuntu and macOS, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 Each top-level directory is a stow package mirroring `$HOME`. Stowing one symlinks its
 files into place; `stow -D` removes them. No package installs the tool it configures.
@@ -20,7 +20,7 @@ files into place; `stow -D` removes them. No package installs the tool it config
 | `ripgrep`        | `~/.config/ripgrep/ripgreprc`                                  | `shell` |
 | `fzf`            | `~/.config/fzf/fzfrc`                                          | `shell` |
 | `nvim`           | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim` |         |
-| `code`           | VS Code `settings.json`                                        |         |
+| `code`           | VS Code `settings.json` (Linux path only)                      |         |
 | `tmux`           | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                           | tpm     |
 
@@ -31,6 +31,13 @@ git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
 stow shell readline git ssh gh ripgrep fzf nvim code tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
+```
+
+On macOS, drop `code` — it installs the Linux path, `~/.config/Code/User/`, which VS Code
+there does not read — and take `zsh`, which is already the login shell:
+
+```sh
+stow shell readline git ssh gh ripgrep fzf nvim tmux tmux-powerline zsh
 ```
 
 `stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes
@@ -63,8 +70,15 @@ tmux source-file ~/.tmux.conf
 - **`shell`** — `~/.profile` sets up login shell / session environment, delegating
   to `common.sh` and sourcing `.bashrc` if running bash. `common.sh` is environment
   (`EDITOR`, `PATH`, brew, gcloud, nvm, npm), sourced first so `ssh host 'cmd'` gets the
-  same `PATH` on either distro, and silent for the same reason: `scp` and `rsync` parse
-  that stream as their own protocol. `interactive.sh` is prompt-only (completions, direnv,
+  same `PATH` on any of the three platforms, and silent for the same reason: `scp` and
+  `rsync` parse that stream as their own protocol. Brew is probed at all three standard
+  prefixes rather than linuxbrew alone: on macOS `/etc/paths.d` already puts it on `PATH`,
+  but *behind* `/usr/bin`, so a brew-installed tool loses to the system one, and only
+  `shellenv` corrects that order and exports `HOMEBREW_PREFIX` — which the python and nvm
+  entries are in turn gated on. Those two, brew's unversioned `python` symlinks and the
+  active node bin dir, join the `PATH` list so that every pass re-prepends them: brew and
+  nvm each reshuffle themselves on a re-source, and only a dir in that list holds its
+  place. `interactive.sh` is prompt-only (completions, direnv,
   fzf, aliases), sourced last so it outranks each distro's own aliases and `PS1`, and
   gates on `$-` itself because `bash-suse` has no non-interactive guard to hide behind.
 - **`readline`** — Its own package because `~/.inputrc` applies to every readline program,
@@ -79,9 +93,14 @@ tmux source-file ~/.tmux.conf
   than the project.
 - **`ssh`** — `Include ~/.ssh/config.local` has to be the first line: ssh keeps the
   *first* value it reads for a keyword, the reverse of git, so a `Host *` block above it
-  would win every override. Control sockets go to `/run/user/%i/ssh-%C`, a tmpfs logind
-  clears on logout, with `%C` hashing the destination to fit the ~104 byte limit on a unix
-  socket path.
+  would win every override. `ControlPath` sits above `Host *` for that same reason, and a
+  `Match exec` probe chooses it: `/run/user/%i/ssh-%C` where logind's tmpfs exists, which
+  clears on logout and leaves no stale socket to reap, and `~/.ssh/cm-%C` where it does
+  not. macOS has no `/run` at all, and an unbindable control socket is fatal rather than
+  cosmetic there — ssh authenticates and then exits 255 on every connection — so the
+  fallback is what makes the package usable on a Mac, at the cost of reaping a socket by
+  hand after an unclean exit. `%C` hashes the destination in both branches, to fit the
+  ~104 byte limit on a unix socket path.
 - **`gh`** — Only the keys that differ from gh's defaults. `hosts.yml` holds the OAuth
   token and stays untracked beside it, which is what `--no-folding` guards; gh rewrites
   the file in place through the symlink, so an alias added at the prompt shows up here as
