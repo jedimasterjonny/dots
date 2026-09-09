@@ -26,14 +26,14 @@ fi
 # all — but path_helper appends that entry *after* the system dirs, the reverse
 # of what shellenv does, leaving a brew-installed git or curl losing to the one
 # in /usr/bin. Running shellenv is what puts brew back in front, and what sets
-# HOMEBREW_PREFIX, which the nvm block below is gated on and which nothing else
-# on a Mac exports.
+# HOMEBREW_PREFIX, which the python and nvm blocks below are gated on and which
+# nothing else on a Mac exports.
 #
 # The fallback assignment is not redundant. shellenv prints nothing at all when
 # its bin and sbin are already the first two entries of PATH, so a shell that
 # inherited brew's PATH without its variables — an editor terminal, a CI runner
-# — would otherwise leave HOMEBREW_PREFIX unset and silently skip that block
-# while brew itself worked fine.
+# — would otherwise leave HOMEBREW_PREFIX unset and silently skip both of those
+# blocks while brew itself worked fine.
 for _brew in /home/linuxbrew/.linuxbrew/bin/brew /opt/homebrew/bin/brew /usr/local/bin/brew; do
   [ -x "$_brew" ] || continue
   eval "$("$_brew" shellenv "$_shell")"
@@ -51,7 +51,16 @@ export HOMEBREW_NO_ENV_HINTS=1
 # this file again — a nested shell, `exec bash`, a new tmux pane — and brew's
 # shellenv would prepend itself a second time while these dirs, already present,
 # were left where they were, quietly putting brew back in front.
-for _dir in "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
+# The brew entry is python's unversioned symlinks — `python`, `pip`, `idle` —
+# which the formula keeps out of its own bin dir on purpose, so that installing
+# python cannot quietly become the `python` a script picks up. Nothing else
+# provides a bare `python` on macOS. Named through the `opt/python` alias rather
+# than `opt/python@3.14`: brew repoints that symlink on a major upgrade, so a
+# later 3.15 needs no edit here. Written with :+ rather than :-, so a machine
+# with no brew contributes an empty element that the -d test below drops; :-
+# would leave a bare /opt/python/libexec/bin, which is a real path on some
+# vendor and CI images.
+for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
   [ -d "$_dir" ] || continue
   _path=":$PATH:"
   while :; do
