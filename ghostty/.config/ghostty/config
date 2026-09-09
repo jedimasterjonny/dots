@@ -9,3 +9,14 @@
 # `catppuccin-macchiato`, fails with "theme not found" rather than falling back
 # to anything. `ghostty +list-themes` prints the accepted spellings.
 theme = Catppuccin Macchiato
+
+# Ghostty sets TERM=xterm-ghostty and carries that terminfo inside its own app
+# bundle, which is enough locally and nothing at all to a remote host: ssh
+# somewhere without the entry and ncurses falls back, mangling keys and colours.
+# ssh-terminfo installs the entry on first connect, ssh-env keeps TERM sane
+# where it cannot. Both are off by default — the shipped value is
+# `no-ssh-env,no-ssh-terminfo` — so this is opt-in rather than a tweak.
+#
+# Naming any feature replaces the whole default set, so cursor, title and path
+# are repeated here to keep them; only sudo stays off, as it does by default.
+shell-integration-features = cursor,title,path,ssh-env,ssh-terminfo

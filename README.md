@@ -115,12 +115,26 @@ tmux source-file ~/.tmux.conf
   `FZF_CTRL_T_COMMAND` is left unset on purpose so CTRL-T keeps fzf's own walker, which
   offers the directories and gitignored-but-wanted files that `rg --files` drops. The key
   bindings need fzf 0.48 or newer.
-- **`ghostty`** — Carries the theme and nothing else, the same rule as `gh`. It names
-  `Catppuccin Macchiato` exactly as the theme file is spelled, because Ghostty resolves the
-  value as a filename under its themes directory: the usual slug, `catppuccin-macchiato`,
-  fails with "theme not found" rather than falling back to a default. That flavour is the
-  one `nvim` sets and the palette `tmux-powerline`'s bubble theme draws from, so a terminal
-  running nvim inside tmux is one set of colours rather than three.
+- **`ghostty`** — Two settings, both load-bearing; Ghostty's remaining defaults are left
+  alone. It names `Catppuccin Macchiato` exactly as the theme file is spelled, because
+  Ghostty resolves the value as a filename under its themes directory: the usual slug,
+  `catppuccin-macchiato`, fails with "theme not found" rather than falling back to a
+  default. That flavour is the one `nvim` sets and the palette `tmux-powerline`'s bubble
+  theme draws from, so a terminal running nvim inside tmux is one set of colours rather
+  than three. `shell-integration-features` then turns on `ssh-env` and `ssh-terminfo`,
+  which ship *disabled*: Ghostty sets `TERM=xterm-ghostty` and keeps that terminfo inside
+  its own app bundle, so without them an ssh to a host that has never seen the entry
+  mangles keys and colours. Naming any feature replaces the whole default set, so `cursor`,
+  `title` and `path` are repeated to keep them.
+
+  On macOS the binary lives inside the `.app` and is not on `PATH`. Anything looking for a
+  `ghostty` executable — `snacks.nvim`'s health check among them — needs a link into a dir
+  `shell` already prepends:
+
+  ```sh
+  mkdir -p ~/.local/bin
+  ln -sf /Applications/Ghostty.app/Contents/MacOS/ghostty ~/.local/bin/ghostty
+  ```
 - **`nvim`** — Plugins are deliberately unpinned: `lazy-lock.json` stays out of the repo,
   so a fresh machine takes each at its latest commit. `:Lazy sync` to update.
 - **Stow** — `.stowrc` sets `--no-folding`, so stow links individual files rather than
