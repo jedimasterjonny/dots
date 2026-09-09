@@ -43,6 +43,43 @@ done
 unset _brew
 export HOMEBREW_NO_ENV_HINTS=1
 
+## nvm
+# Same split: nvm.sh is what puts node on PATH, its completions are not.
+#
+# Before the path block rather than after it, so that the bin dir can join the
+# list there. nvm.sh re-activates the current version on every source, but
+# nvm_change_path substitutes its entry in place instead of re-prepending it,
+# deliberately, to preserve the order PATH already had. So node cannot defend
+# its position on a second pass, while brew's shellenv hoists itself back to the
+# front every time it is not already there — a nested shell, `exec bash`, a new
+# tmux pane — and a brew-installed node would quietly start outranking the
+# selected version. Running nvm here lets the loop below re-anchor it like every
+# other dir.
+#
+# The bin dir is captured here rather than read from the environment down in the
+# loop, so that the entry follows from this file having run nvm rather than from
+# whatever a parent process happened to export.
+if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  # brew's nvm.sh creates ~/.nvm as it loads and dies where it cannot — an
+  # unwritable HOME, a daemon account. `set -e` propagates into a sourced file,
+  # so under one that failure aborts the caller here and takes everything below
+  # with it: no PATH block, no EDITOR, no ripgrep. Chaining `|| true` onto the
+  # source does not help, because nvm.sh dies partway rather than returning
+  # non-zero. Dropping -e around it, and restoring it only if it was set, is
+  # what actually contains the failure.
+  if [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]; then
+    case $- in
+      *e*) _nvm_e=1; set +e ;;
+      *)   _nvm_e= ;;
+    esac
+    . "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+    [ -z "$_nvm_e" ] || set -e
+    unset _nvm_e
+  fi
+  _nvm_bin="${NVM_BIN:-}"
+fi
+
 ## path
 # Listed lowest-priority first; each is prepended, so the last one wins.
 #
@@ -60,7 +97,13 @@ export HOMEBREW_NO_ENV_HINTS=1
 # with no brew contributes an empty element that the -d test below drops; :-
 # would leave a bare /opt/python/libexec/bin, which is a real path on some
 # vendor and CI images.
-for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
+#
+# The node entry is the active version's bin dir, captured in the nvm block just
+# above. Re-prepended here rather than left where nvm.sh put it, so that it
+# holds its place across a re-source; empty, and skipped, when no version is
+# selected. Below the personal dirs on purpose: a node or npm wrapper dropped in
+# one of those is meant to win, as it would for any other tool.
+for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "${_nvm_bin:-}" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
   [ -d "$_dir" ] || continue
   _path=":$PATH:"
   while :; do
@@ -79,7 +122,7 @@ for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "$HOME
   fi
 done
 export PATH
-unset _dir _path
+unset _dir _path _nvm_bin
 
 ## editor
 # After the path block above, not before it: probing for nvim any earlier misses
@@ -112,13 +155,6 @@ unset _rg_config
 # needs it. The completions are interactive-only and live in interactive.sh.
 if [ -s "$HOME/google-cloud-sdk/path.$_shell.inc" ]; then
   . "$HOME/google-cloud-sdk/path.$_shell.inc"
-fi
-
-## nvm
-# Same split: nvm.sh is what puts node on PATH, its completions are not.
-if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -d "$HOMEBREW_PREFIX/opt/nvm" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && . "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
 fi
 
 ## npm global bin
