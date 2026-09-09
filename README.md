@@ -21,6 +21,7 @@ files into place; `stow -D` removes them. No package installs the tool it config
 | `fzf`            | `~/.config/fzf/fzfrc`                                          | `shell` |
 | `nvim`           | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim` |         |
 | `code`           | VS Code `settings.json` (Linux path only)                      |         |
+| `ghostty`        | `~/.config/ghostty/config`                                     |         |
 | `tmux`           | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                           | tpm     |
 
@@ -29,7 +30,7 @@ files into place; `stow -D` removes them. No package installs the tool it config
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell readline git ssh gh ripgrep fzf nvim code tmux tmux-powerline
+stow shell readline git ssh gh ripgrep fzf nvim code ghostty tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 
@@ -37,7 +38,7 @@ On macOS, drop `code` — it installs the Linux path, `~/.config/Code/User/`, wh
 there does not read — and take `zsh`, which is already the login shell:
 
 ```sh
-stow shell readline git ssh gh ripgrep fzf nvim tmux tmux-powerline zsh
+stow shell readline git ssh gh ripgrep fzf nvim ghostty tmux tmux-powerline zsh
 ```
 
 `stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes
@@ -114,6 +115,12 @@ tmux source-file ~/.tmux.conf
   `FZF_CTRL_T_COMMAND` is left unset on purpose so CTRL-T keeps fzf's own walker, which
   offers the directories and gitignored-but-wanted files that `rg --files` drops. The key
   bindings need fzf 0.48 or newer.
+- **`ghostty`** — Carries the theme and nothing else, the same rule as `gh`. It names
+  `Catppuccin Macchiato` exactly as the theme file is spelled, because Ghostty resolves the
+  value as a filename under its themes directory: the usual slug, `catppuccin-macchiato`,
+  fails with "theme not found" rather than falling back to a default. That flavour is the
+  one `nvim` sets and the palette `tmux-powerline`'s bubble theme draws from, so a terminal
+  running nvim inside tmux is one set of colours rather than three.
 - **`nvim`** — Plugins are deliberately unpinned: `lazy-lock.json` stays out of the repo,
   so a fresh machine takes each at its latest commit. `:Lazy sync` to update.
 - **Stow** — `.stowrc` sets `--no-folding`, so stow links individual files rather than

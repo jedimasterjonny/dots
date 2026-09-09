@@ -1,0 +1,11 @@
+# Only what differs from Ghostty's defaults, as with the gh package.
+
+# Matches the catppuccin-macchiato colorscheme the nvim package sets, and the
+# palette tmux-powerline's bubble theme draws from, so a terminal running nvim
+# inside tmux is one set of colours rather than three.
+#
+# The name has to be spelled exactly as the theme file is: Ghostty resolves it
+# as a filename under its themes directory, so the usual slug form,
+# `catppuccin-macchiato`, fails with "theme not found" rather than falling back
+# to anything. `ghostty +list-themes` prints the accepted spellings.
+theme = Catppuccin Macchiato
