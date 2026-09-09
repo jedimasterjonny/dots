@@ -94,13 +94,13 @@ tmux source-file ~/.tmux.conf
 - **`ssh`** — `Include ~/.ssh/config.local` has to be the first line: ssh keeps the
   *first* value it reads for a keyword, the reverse of git, so a `Host *` block above it
   would win every override. `ControlPath` sits above `Host *` for that same reason, and a
-  `Match exec` probe chooses it: `/run/user/%i/ssh-%C` where logind's tmpfs exists, which
-  clears on logout and leaves no stale socket to reap, and `~/.ssh/cm-%C` where it does
-  not. macOS has no `/run` at all, and an unbindable control socket is fatal rather than
-  cosmetic there — ssh authenticates and then exits 255 on every connection — so the
-  fallback is what makes the package usable on a Mac, at the cost of reaping a socket by
-  hand after an unclean exit. `%C` hashes the destination in both branches, to fit the
-  ~104 byte limit on a unix socket path.
+  `Match exec` probe chooses it: `/run/user/%i/ssh-%C` where logind's tmpfs exists and is
+  writable, `~/.ssh/cm-%C` where it is not. macOS has no `/run` at all, and an unbindable
+  control socket is fatal rather than cosmetic there — ssh authenticates and then exits
+  255 on every connection — so the fallback is what makes the package usable on a Mac. It
+  costs little: a master killed uncleanly leaves a dead socket, but the next connection to
+  that destination unlinks it and takes over, silently. `%C` hashes the whole destination
+  in both branches, to fit the socket path inside `sun_path`.
 - **`gh`** — Only the keys that differ from gh's defaults. `hosts.yml` holds the OAuth
   token and stays untracked beside it, which is what `--no-folding` guards; gh rewrites
   the file in place through the symlink, so an alias added at the prompt shows up here as
