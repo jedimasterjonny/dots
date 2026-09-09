@@ -15,9 +15,32 @@ fi
 ## brew
 # Before the path block below: brew's shellenv prepends its own bin dir, so
 # running it first leaves the personal dirs ahead of brew-installed tools.
-if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv "$_shell")"
-fi
+#
+# The prefix differs per platform, so probe for it rather than hardcode one:
+# linuxbrew on the distros, /opt/homebrew on Apple Silicon, /usr/local on Intel
+# Macs. Most specific first: an Apple Silicon Mac can carry a second, Rosetta
+# brew under /usr/local, and the native prefix should win.
+#
+# On macOS this block is doing more than it is on Linux. Homebrew's installer
+# drops /etc/paths.d/homebrew, so brew lands on PATH with no shell config at
+# all — but path_helper appends that entry *after* the system dirs, the reverse
+# of what shellenv does, leaving a brew-installed git or curl losing to the one
+# in /usr/bin. Running shellenv is what puts brew back in front, and what sets
+# HOMEBREW_PREFIX, which the nvm block below is gated on and which nothing else
+# on a Mac exports.
+#
+# The fallback assignment is not redundant. shellenv prints nothing at all when
+# its bin and sbin are already the first two entries of PATH, so a shell that
+# inherited brew's PATH without its variables — an editor terminal, a CI runner
+# — would otherwise leave HOMEBREW_PREFIX unset and silently skip that block
+# while brew itself worked fine.
+for _brew in /home/linuxbrew/.linuxbrew/bin/brew /opt/homebrew/bin/brew /usr/local/bin/brew; do
+  [ -x "$_brew" ] || continue
+  eval "$("$_brew" shellenv "$_shell")"
+  [ -n "${HOMEBREW_PREFIX:-}" ] || export HOMEBREW_PREFIX="${_brew%/bin/brew}"
+  break
+done
+unset _brew
 export HOMEBREW_NO_ENV_HINTS=1
 
 ## path
