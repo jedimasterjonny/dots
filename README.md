@@ -21,6 +21,7 @@ files into place; `stow -D` removes them. No package installs the tool it config
 | `fzf`            | `~/.config/fzf/fzfrc`                                          | `shell` |
 | `nvim`           | [LazyVim](https://www.lazyvim.org/) config in `~/.config/nvim` |         |
 | `code`           | VS Code `settings.json` (Linux path only)                      |         |
+| `code-macos`     | Same `settings.json`, macOS path                               |         |
 | `ghostty`        | `~/.config/ghostty/config`                                     |         |
 | `tmux`           | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline` | `~/.config/tmux-powerline/config.sh`                           | tpm     |
@@ -34,11 +35,12 @@ stow shell readline git ssh gh ripgrep fzf nvim code ghostty tmux tmux-powerline
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 
-On macOS, drop `code` — it installs the Linux path, `~/.config/Code/User/`, which VS Code
-there does not read — and take `zsh`, which is already the login shell:
+On macOS, swap `code` for `code-macos` — `code` installs the Linux path,
+`~/.config/Code/User/`, which VS Code there does not read — and take `zsh`, which is
+already the login shell:
 
 ```sh
-stow shell readline git ssh gh ripgrep fzf nvim ghostty tmux tmux-powerline zsh
+stow shell readline git ssh gh ripgrep fzf nvim code-macos ghostty tmux tmux-powerline zsh
 ```
 
 `stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes
@@ -137,6 +139,10 @@ tmux source-file ~/.tmux.conf
   ```
 - **`nvim`** — Plugins are deliberately unpinned: `lazy-lock.json` stays out of the repo,
   so a fresh machine takes each at its latest commit. `:Lazy sync` to update.
+- **`code-macos`** — Holds a relative symlink to `code`'s `settings.json` rather than a
+  second copy, so the two platform packages never drift. Stowing it gives
+  `~/Library/Application Support/Code/User/settings.json` -> `code-macos/...` ->
+  `code/.config/Code/User/settings.json`. Never stow `code` and `code-macos` together.
 - **Stow** — `.stowrc` sets `--no-folding`, so stow links individual files rather than
   whole directories. Files a tool writes back into a stowed directory (`lazy-lock.json`
   and `lazyvim.json` in `~/.config/nvim`) then land in a real directory outside the repo,
