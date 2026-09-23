@@ -1,0 +1,90 @@
+# Only what differs from Herdr's defaults, as with the ghostty and gh packages.
+# `herdr --default-config` prints every setting and its default for reference;
+# `herdr config check` validates this file and names any key it does not know,
+# which is worth running after an update since unknown keys are skipped with a
+# warning rather than refused.
+
+# Written by Herdr itself on first run, not by hand. Left in place because
+# removing it replays the onboarding flow on the next start.
+onboarding = false
+
+[theme]
+# Herdr has Catppuccin, but only two flavours of it: `catppuccin` is Mocha, and
+# `catppuccin-latte` is the light one. There is no Macchiato — 0.9.1 carries
+# Mocha's #1e1e2e and #cdd6f4 and Latte's #eff1f5 in the binary, and Macchiato's
+# #24273a and #cad3f5 not at all — so the flavour every other package here pins
+# has to be reached through the override table below rather than by name.
+name = "catppuccin"
+
+# Off by default; named so it stays off. Auto-switching pairs a dark theme with
+# a light sibling and follows the host terminal's appearance, which would undo
+# the point of pinning one flavour.
+auto_switch = false
+
+# Mocha repainted as Macchiato. The two flavours share a structure — same slot
+# names, same roles, different values — so each line below is its Mocha default
+# swapped for the Macchiato entry in the same slot, and the surrounding comments
+# give the Mocha value being replaced.
+#
+# The accepted keys are not the ones the published docs show: `border`, `cyan`,
+# `magenta` and `orange` are all rejected as unknown, and `surface_dim`, `teal`,
+# `overlay0`, `overlay1`, `surface0`, `surface1` and `subtext0` are accepted
+# despite appearing in no example. The list here was probed against
+# `herdr config check` one key at a time, so every line is known to be read.
+#
+# The Mocha values in the trailing comments are measured, not assumed. A second
+# Herdr server on a throwaway socket, a client attached to it on a pty, and the
+# frame it wrote captured and counted by colour: overriding one token at a time
+# names its default by which colour leaves the frame. Three of the four tokens
+# whose defaults are undocumented turned out not to be what the docs implied.
+[theme.custom]
+
+# Surfaces. Herdr names these for where they are drawn rather than for the slot
+# they come from, and the measured defaults give the slots away.
+panel_bg = "#1e2030"      # mantle,   was #181825
+active_row_bg = "#24273a" # base,     was #1e1e2e
+surface_dim = "#24273a"   # base,     was #1e1e2e
+selection_bg = "#363a4f"  # surface0, was #313244
+
+# panel_bg is here despite the docs giving its default as "reset" — the value
+# that would take the terminal's own background and need no override at all.
+# It does not: on an idle screen it paints Mocha mantle over 49 runs, and
+# overriding it moves every one of them. Trusting the documented default would
+# have left the largest block of colour in the UI at the wrong flavour.
+#
+# surface_dim and active_row_bg are both base rather than two different greys;
+# the 50 base runs in a default frame split 45/5 between them. "Dim" names the
+# role, not a dimmer colour.
+#
+# sidebar_bg is deliberately absent, and is the one token that should stay that
+# way. It emits no colour of its own by default — setting it adds 137 runs and
+# removes none — so the sidebar simply shows the terminal background, which
+# ghostty already paints Macchiato base. Pinning it would paint over that and
+# change how Herdr looks rather than what flavour it is.
+
+# Text, from lightest to dimmest.
+text = "#cad3f5"      # was #cdd6f4
+subtext0 = "#a5adcb"  # was #a6adc8
+overlay1 = "#8087a2"  # was #7f849c
+overlay0 = "#6e738d"  # was #6c7086
+
+# Surfaces addressed by palette name rather than by role. Same colours as
+# selection_bg above and one step up from it; Herdr exposes both spellings.
+surface0 = "#363a4f"  # was #313244
+surface1 = "#494d64"  # was #45475a
+
+# Accents. The default accent is Mocha blue, not the pink the shipped example
+# suggests — overriding `accent` is what moves the one #89b4fa run in a default
+# frame, and overriding `blue` moves nothing. Both are set to Macchiato blue
+# here so the pair cannot drift apart.
+accent = "#8aadf4"    # blue,   was #89b4fa
+blue = "#8aadf4"      # was #89b4fa
+
+# The rest do not appear on an idle screen, so these are slot-name substitutions
+# rather than measured swaps — safe ones, the keys being literal palette names.
+mauve = "#c6a0f6"     # was #cba6f7
+red = "#ed8796"       # was #f38ba8
+peach = "#f5a97f"     # was #fab387
+yellow = "#eed49f"    # was #f9e2af
+green = "#a6da95"     # was #a6e3a1
+teal = "#8bd5ca"      # was #94e2d5

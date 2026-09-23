@@ -29,13 +29,14 @@ are linked from the table below.
 | [`ghostty`](ghostty/README.md)       | `~/.config/ghostty/config`                                     |         |
 | [`tmux`](tmux/README.md)             | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline`                     | `~/.config/tmux-powerline/config.sh`                           | tpm     |
+| `herdr`                              | `~/.config/herdr/config.toml`                                  |         |
 
 ## Install
 
 ```sh
 git clone git@github.com:jedimasterjonny/dots.git ~/dots
 cd ~/dots
-stow shell readline git ssh gh ripgrep fzf nvim code ghostty tmux tmux-powerline
+stow shell readline git ssh gh ripgrep fzf nvim code ghostty tmux tmux-powerline herdr
 stow bash-suse  # or bash-ubuntu, and/or zsh
 ```
 
@@ -44,7 +45,7 @@ On macOS, swap `code` for `code-macos` — `code` installs the Linux path,
 already the login shell:
 
 ```sh
-stow shell readline git ssh gh ripgrep fzf nvim code-macos ghostty tmux tmux-powerline zsh
+stow shell readline git ssh gh ripgrep fzf nvim code-macos ghostty tmux tmux-powerline herdr zsh
 ```
 
 `stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes
