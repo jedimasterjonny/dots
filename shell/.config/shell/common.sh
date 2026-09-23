@@ -134,6 +134,53 @@ else
   export EDITOR=vim
 fi
 
+## ghostty terminfo
+# Ghostty sets TERM=xterm-ghostty. ncurses carries the definition from 6.5
+# onwards but files it under `ghostty` alone, with no `xterm-ghostty` alias, so
+# on a host whose only copy came from the distro the name Ghostty actually sets
+# resolves to nothing. tmux reads the outer $TERM before it will attach and
+# exits with "missing or unsuitable terminal: xterm-ghostty" rather than falling
+# back, which takes out `tmux a` on arrival.
+#
+# The alias is compiled rather than $TERM rewritten to `ghostty`. The xterm-
+# prefix is load-bearing and is why upstream picked that spelling: a great deal
+# of software tests $TERM against xterm* to decide what to turn on — the title
+# block in bash-ubuntu/.bashrc among it — and `ghostty` matches none of it.
+# Fixing the database keeps the name honest and fixes every curses program at
+# once; rewriting the variable fixes tmux and quietly degrades the rest.
+#
+# Ghostty's own ssh-terminfo does this from the client side, and is enabled in
+# the ghostty package, but it can only act where its shell wrapper wraps the ssh
+# call. This is the same repair made locally, so a session that arrives by any
+# other route is covered too.
+#
+# The three stats come first and cost nothing on a host that already resolves
+# the name; infocmp is authoritative but forks, so it only runs where all three
+# miss. After the first bootstrap the first stat hits and this block is one
+# stat. Deliberately not gated on interactivity: `ssh host 'cmd'` reads this
+# file too, and a curses program in a remote command needs the entry as much as
+# a prompt does.
+if [ "${TERM:-}" = "xterm-ghostty" ] &&
+   [ ! -e "${TERMINFO:-$HOME/.terminfo}/x/xterm-ghostty" ] &&
+   [ ! -e "/usr/share/terminfo/x/xterm-ghostty" ] &&
+   [ ! -e "/etc/terminfo/x/xterm-ghostty" ] &&
+   ! infocmp xterm-ghostty >/dev/null 2>&1; then
+  # tic writes to $TERMINFO, or ~/.terminfo when that is unset. Renaming the
+  # description line puts both names in the entry, so `ghostty` keeps resolving
+  # alongside the alias rather than being shadowed by it.
+  #
+  # Silent and non-fatal throughout: no tic, no `ghostty` entry to copy from, an
+  # unwritable HOME. Any of those leaves the shell to carry on and tmux to
+  # report the missing terminal exactly as it did before, which is the point of
+  # the `|| true` — a failing pipeline must not abort a sourced file under
+  # `set -e`, and must not print to a stream scp and rsync are parsing.
+  if command -v tic >/dev/null 2>&1; then
+    infocmp -x ghostty 2>/dev/null |
+      sed 's/^ghostty|/xterm-ghostty|ghostty|/' |
+      tic -x - >/dev/null 2>&1 || true
+  fi
+fi
+
 ## ripgrep
 # ripgrep reads no config file unless RIPGREP_CONFIG_PATH names one, so the
 # ripgrep package does nothing without this. Here rather than in

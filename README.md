@@ -81,7 +81,9 @@ tmux source-file ~/.tmux.conf
   entries are in turn gated on. Those two, brew's unversioned `python` symlinks and the
   active node bin dir, join the `PATH` list so that every pass re-prepends them: brew and
   nvm each reshuffle themselves on a re-source, and only a dir in that list holds its
-  place. `interactive.sh` is prompt-only (completions, direnv,
+  place. It also compiles an `xterm-ghostty` terminfo alias into `~/.terminfo` on first
+  use, once, where the host resolves `ghostty` but not the `xterm-ghostty` that Ghostty
+  actually sets — see `ghostty` below. `interactive.sh` is prompt-only (completions, direnv,
   fzf, aliases), sourced last so it outranks each distro's own aliases and `PS1`, and
   gates on `$-` itself because `bash-suse` has no non-interactive guard to hide behind.
 - **`readline`** — Its own package because `~/.inputrc` applies to every readline program,
@@ -128,6 +130,18 @@ tmux source-file ~/.tmux.conf
   its own app bundle, so without them an ssh to a host that has never seen the entry
   mangles keys and colours. Naming any feature replaces the whole default set, so `cursor`,
   `title` and `path` are repeated to keep them.
+
+  `ssh-terminfo` only reaches the hosts its shell wrapper wraps the `ssh` call to, so a
+  session arriving any other way — a multiplexed or proxied connection, a remote command,
+  some other client — still lands with a `TERM` the host cannot resolve. ncurses has
+  carried the definition since 6.5, but files it as `ghostty` with no `xterm-ghostty`
+  alias, and `xterm-ghostty` is the name Ghostty sets; `tmux` reads the outer `$TERM`
+  before it will attach and exits with "missing or unsuitable terminal" rather than
+  falling back, so `tmux a` dies on arrival. `shell` closes that from the far side by
+  compiling the alias into `~/.terminfo` on first use. It compiles rather than rewriting
+  `TERM` to `ghostty`, because the `xterm-` prefix is why upstream chose that spelling —
+  a great deal of software, the title block in `bash-ubuntu/.bashrc` included, tests
+  `$TERM` against `xterm*` to decide what to enable, and `ghostty` matches none of it.
 
   On macOS the binary lives inside the `.app` and is not on `PATH`. Anything looking for a
   `ghostty` executable — `snacks.nvim`'s health check among them — needs a link into a dir
