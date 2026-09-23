@@ -1,2 +1,10 @@
+# Link individual files rather than whole directories. A folded directory would
+# itself be a symlink into this repo, so anything a tool writes back into one —
+# lazy-lock.json and lazyvim.json under ~/.config/nvim, gh's hosts.yml beside
+# the config it rewrites — would land inside the working tree as an untracked
+# file. Unfolded, those writes go to a real directory outside the repo.
 --no-folding
+
+# Report what is linked and unlinked. Stow is otherwise silent on success, and
+# a mistyped package name is easier to spot in the output than in $HOME.
 --verbose=1
