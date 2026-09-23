@@ -29,7 +29,7 @@ are linked from the table below.
 | [`ghostty`](ghostty/README.md)       | `~/.config/ghostty/config`                                     |         |
 | [`tmux`](tmux/README.md)             | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline`                     | `~/.config/tmux-powerline/config.sh`                           | tpm     |
-| `herdr`                              | `~/.config/herdr/config.toml`                                  |         |
+| `herdr`                              | `~/.config/herdr/{config,agent-detection/agy}.toml`            |         |
 
 ## Install
 
