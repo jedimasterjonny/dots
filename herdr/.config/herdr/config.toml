@@ -18,6 +18,24 @@ onboarding = false
 # not repeated here — but turning it off would quietly undo this line.
 pane_borders = "always"
 
+[ui.toast]
+# Off by default. "terminal" hands the notification to the outer terminal as an
+# escape sequence rather than to an OS notification service, which is the one
+# route that reaches the laptop: Herdr runs on the remote host, and the sequence
+# rides the same ssh stream as the rest of the output until ghostty turns it
+# into a desktop notification. "system" would notify the remote host's desktop,
+# which nobody is looking at.
+delivery = "terminal"
+
+[keys]
+# Back-and-forth between the two most recent panes, tmux's `prefix ;`. Unset by
+# default, and prefix+tab is already cycle_pane_next's — `herdr config check`
+# accepts both on one key without a word, leaving which one fires undefined. So
+# cycle_pane_next is unbound to make the choice explicit. Cycling is not lost:
+# prefix+shift+tab still steps the other way and prefix+h/j/k/l go direct.
+last_pane = "prefix+tab"
+cycle_pane_next = ""
+
 [theme]
 # Herdr has Catppuccin, but only two flavours of it: `catppuccin` is Mocha, and
 # `catppuccin-latte` is the light one. There is no Macchiato — 0.9.1 carries
