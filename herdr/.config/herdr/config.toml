@@ -8,6 +8,16 @@
 # removing it replays the onboarding flow on the next start.
 onboarding = false
 
+[ui]
+# Frame a lone pane too, not just split ones. The default "auto" draws borders
+# only once a tab is split, so the pane area jumps by a cell on every side each
+# time the first split opens or the last one closes.
+#
+# "always" only frames a single pane while pane_outer_borders is on, since every
+# edge of a lone pane is an outer edge. That is already the default, so it is
+# not repeated here — but turning it off would quietly undo this line.
+pane_borders = "always"
+
 [theme]
 # Herdr has Catppuccin, but only two flavours of it: `catppuccin` is Mocha, and
 # `catppuccin-latte` is the light one. There is no Macchiato — 0.9.1 carries
