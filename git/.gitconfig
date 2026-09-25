@@ -6,6 +6,10 @@
 	defaultRefFormat = files
 [pull]
 	rebase = true
+[rebase]
+	# Also for pull.rebase: a dirty tree is stashed around the rebase and put
+	# back after, rather than the pull refusing to start.
+	autoStash = true
 [push]
 	# Pair for pull.rebase above: new branches push without --set-upstream.
 	autoSetupRemote = true
