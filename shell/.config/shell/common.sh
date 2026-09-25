@@ -103,7 +103,11 @@ fi
 # holds its place across a re-source; empty, and skipped, when no version is
 # selected. Below the personal dirs on purpose: a node or npm wrapper dropped in
 # one of those is meant to win, as it would for any other tool.
-for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "${_nvm_bin:-}" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
+#
+# bun is here rather than where its installer puts it: the installer appends an
+# export to ~/.bashrc, which is a stow symlink into this repo, so it leaves the
+# tree dirty and `git pull` refuses to rebase.
+for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "${_nvm_bin:-}" "$HOME/.bun/bin" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
   [ -d "$_dir" ] || continue
   _path=":$PATH:"
   while :; do
