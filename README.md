@@ -30,6 +30,7 @@ are linked from the table below.
 | [`tmux`](tmux/README.md)             | `~/.tmux.conf`                                                 | tpm     |
 | `tmux-powerline`                     | `~/.config/tmux-powerline/config.sh`                           | tpm     |
 | `herdr`                              | `~/.config/herdr/{config,agent-detection/agy}.toml`            |         |
+| [`brew`](brew/README.md)             | `~/Brewfile` for `brew bundle` (macOS only)                    |         |
 
 ## Install
 
@@ -42,10 +43,10 @@ stow bash-suse  # or bash-ubuntu, and/or zsh
 
 On macOS, swap `code` for `code-macos` — `code` installs the Linux path,
 `~/.config/Code/User/`, which VS Code there does not read — and take `zsh`, which is
-already the login shell:
+already the login shell, and `brew`:
 
 ```sh
-stow shell readline git ssh gh ripgrep fzf nvim code-macos ghostty tmux tmux-powerline herdr zsh
+stow shell readline git ssh gh ripgrep fzf nvim code-macos ghostty tmux tmux-powerline herdr zsh brew
 ```
 
 `stow */` fails: `bash-suse` and `bash-ubuntu` both install `~/.bashrc`. `stow -D` removes

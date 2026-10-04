@@ -1,0 +1,51 @@
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Automate deployment, configuration, and upgrading
+brew "ansible"
+# Checks ansible playbooks for practices and behaviour
+brew "ansible-lint"
+# Load/unload environment variables based on $PWD
+brew "direnv"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Interpreter for PostScript and PDF
+brew "ghostscript"
+# Tools and libraries to manipulate images in select formats
+brew "imagemagick"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Mac App Store command-line interface
+brew "mas"
+# CLI for Mermaid library
+brew "mermaid-cli"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Manage multiple Node.js versions
+brew "nvm"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Organize software neatly under a single directory tree (e.g. /usr/local)
+brew "stow"
+# Modernized, complete, self-contained TeX/LaTeX engine
+brew "tectonic"
+# Terminal multiplexer
+brew "tmux"
+# Parser generator tool
+brew "tree-sitter-cli"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# Voice and text chat software
+cask "discord"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
+# Web browser
+cask "google-chrome"
+# Calculate the overall performance of an investment portfolio
+cask "portfolioperformance"
+# Open-source code editor
+cask "visual-studio-code"
+mas "WhatsApp", id: 310633997
