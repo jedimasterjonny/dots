@@ -91,12 +91,12 @@ fi
 # The brew entry is python's unversioned symlinks — `python`, `pip`, `idle` —
 # which the formula keeps out of its own bin dir on purpose, so that installing
 # python cannot quietly become the `python` a script picks up. Nothing else
-# provides a bare `python` on macOS. Named through the `opt/python` alias rather
-# than `opt/python@3.14`: brew repoints that symlink on a major upgrade, so a
-# later 3.15 needs no edit here. Written with :+ rather than :-, so a machine
-# with no brew contributes an empty element that the -d test below drops; :-
-# would leave a bare /opt/python/libexec/bin, which is a real path on some
-# vendor and CI images.
+# provides a bare `python` on macOS. Named through the `opt/python@3` alias
+# rather than `opt/python@3.14`: brew repoints that symlink on a major upgrade,
+# so a later major needs no edit here. Written with :+ rather than :-, so a
+# machine with no brew contributes an empty element that the -d test below
+# drops; :- would leave a bare /opt/python@3/libexec/bin, a path outside any
+# brew install.
 #
 # The node entry is the active version's bin dir, captured in the nvm block just
 # above. Re-prepended here rather than left where nvm.sh put it, so that it
@@ -107,7 +107,7 @@ fi
 # bun is here rather than where its installer puts it: the installer appends an
 # export to ~/.bashrc, which is a stow symlink into this repo, so it leaves the
 # tree dirty and `git pull` refuses to rebase.
-for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python/libexec/bin}" "${_nvm_bin:-}" "$HOME/.bun/bin" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
+for _dir in "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/python@3/libexec/bin}" "${_nvm_bin:-}" "$HOME/.bun/bin" "$HOME/.local/bin" "$HOME/.antigravity/antigravity/bin" "$HOME/jonnyoc-bin"; do
   [ -d "$_dir" ] || continue
   _path=":$PATH:"
   while :; do
